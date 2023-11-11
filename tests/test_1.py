@@ -11,7 +11,9 @@ class TestAllTests(BaseAnatations):
     #     self.base_page.swipe_too('MOVE_LEFT')
 
     def test_2(self):
-        self.base_page.open_chrome()
+        # self.base_page.open_chrome()
+        self.base_page.wildberries()
+        sleep(10)
 
 
 
