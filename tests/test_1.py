@@ -12,7 +12,8 @@ class TestAllTests(BaseAnatations):
 
     def test_2(self):
         # self.base_page.open_chrome()
-        self.base_page.wildberries()
+        self.wildberries_app.open_and_add_localisation()
+
         sleep(10)
 
 

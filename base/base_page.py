@@ -7,12 +7,10 @@ from time import sleep
 
 class BasePage:
 
-    ACTIVITY = 'com.wildberries.ru/ru.wildberries.SplashActivity'
-    APP_NAME = 'com.wildberries.ru'
-
     CHROME = (AppiumBy.XPATH, '//android.widget.TextView[@content-desc="Chrome"]')
     LOGO_GOOGLE = (AppiumBy.CLASS_NAME, 'android.widget.FrameLayout')
     SEARSH_INPUT = (AppiumBy.ID, 'com.android.chrome:id/search_box_text')
+    RADIO_BUTTON_RUSSIA = (AppiumBy.XPATH, '//android.widget.TextView[@text="Россия"]')
 
 
     def __init__(self, driver:Remote):
@@ -20,7 +18,7 @@ class BasePage:
         self.wait = WebDriverWait(driver, 20, 1)
 
 
-    def open_activity(self, main_activity):
+    def open_activity(self, main_activity: str) -> None:
         """Открывает установленное приложение.
         Вывод текущего activity: adb shell am stack list
         Params: пример:
@@ -30,22 +28,19 @@ class BasePage:
         command = f"adb shell am start -n {main_activity}"
         subprocess.run(command, shell=True)
 
-    def delet_cash(self, app_name):
+    def delet_cash(self, app_name: str) -> None:
         """Clear cash"""
         command = f"adb shell pm clear {app_name}"
         print(command)
         subprocess.run(command, shell=True)
 
-    def open_wildberries(self):
-        self.open_activity(self.ACTIVITY)
 
-
-    def click_obj(self, locator):
+    def click_obj(self, locator) -> None:
         """Нажать по кликабельному объекту"""
         el: WebElement = self.wait.until(EC.element_to_be_clickable(locator))
         el.click()
 
-    def check_element_located(self, locator: str):
+    def check_element_located(self, locator: str) -> None:
         """
         Проверка видимости элемента
 
@@ -55,7 +50,10 @@ class BasePage:
         self.wait.until(EC.visibility_of_element_located(locator))
 
 
-    def send(self, locator: str, text: str):
+
+
+
+    def send(self, locator: str, text: str) -> None:
         """
         Ввод текста
 
@@ -66,13 +64,13 @@ class BasePage:
         el: WebElement = self.wait.until(EC.element_to_be_clickable(locator))
         el.send_keys(text)
 
-    def press_enter(self):
+    def press_enter(self) -> None:
         # self.driver.is_keyboard_shown()
         self.driver.press_keycode(66)
         sleep(2)
 
 
-    def swipe_too(self, target_direction: str = 'MOVE_UP', repeat: int = 1):
+    def swipe_too(self, target_direction: str = 'MOVE_UP', repeat: int = 1) -> None:
         """
         Params:
             target_direction - (str) 'MOVE_UP'
@@ -99,8 +97,8 @@ class BasePage:
         self.press_enter()
         sleep(5)
 
-    def wildberries(self):
-        self.open_wildberries()
+
+
 
 
 
