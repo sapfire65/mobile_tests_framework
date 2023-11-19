@@ -23,13 +23,13 @@ class Wildberries(BasePage):
 
 
     def open_and_add_localisation(self):
-        # self.setup_app()
-        self.delet_cash(self.APP_NAME_WILDBERIES)
-        # self.open_activity(self.ACTIVITY)
-        # self.click_obj(self.RADIO_BUTTON_RUSSIA)
-        # self.click_obj(self.BUTTON_REMIND_ME_LATER)
-        # self.check_element_located(self.SEARCH_ICON)
-        # print(f'{Fore.YELLOW}Wildberries app is opened start page{Style.RESET_ALL}')
+        self.delete_cache_and_application_data(self.APP_NAME_WILDBERIES,
+                                               '-r', '-d', '-g')
+        self.open_activity(self.ACTIVITY)
+        self.click_obj(self.RADIO_BUTTON_RUSSIA)
+        self.click_obj(self.BUTTON_REMIND_ME_LATER)
+        self.check_element_located(self.SEARCH_ICON)
+
 
 
 

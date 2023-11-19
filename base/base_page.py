@@ -39,7 +39,7 @@ class BasePage:
 
 
     def start_adb_comand_and_check_request_status(self, name_func, adb_request: str) -> bool:
-        """Проверка статуса применения adb запроса"""
+        """Проверка статуса применения adb команды"""
         try:
             obj = subprocess.check_output(adb_request, shell=True, stderr=subprocess.STDOUT, text=True)
             self.color_message_in_consol(name_func, obj)
@@ -50,17 +50,17 @@ class BasePage:
             return False
 
 
-
-
-    def delet_cash(self, app_name: str) -> None:
-        """Clear cash
+    def delete_cache_and_application_data(self, app_name: str, preferences = None, permissions = None, checking_version = None) -> None:
+        """Clear cash or installation app / очистит кеш или установит приложение из папки apps
         Params:
-            app_name: (str) - 'com.wildberries.ru'
+            app_name: str - 'com.wildberries.ru'
+            preferences: str = "-r" — сохранить данные приложения
+            permissions: str = "-d" — выдать все запрашиваемые разрешения
+            checking_version: str = "-g" — отключает проверку версии приложения
         """
         command = f"adb shell pm clear {app_name}"
-        # print(self.start_adb_comand_and_check_request_status('delet_cash', command))
         if not self.start_adb_comand_and_check_request_status('delet_cash', command):
-            self.setup_app(preferences='-r', permissions='-d', checking_version='-g')
+            self.setup_app(preferences=preferences, permissions=permissions, checking_version=checking_version)
 
 
     def open_activity(self, main_activity: str) -> None:
