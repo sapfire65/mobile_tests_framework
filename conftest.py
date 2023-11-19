@@ -6,9 +6,9 @@ from time import sleep
 
 
 capabilities = dict(
-    # app=os.path.abspath('apk_files/wildberries-5-3-4000.apk'),
+    # app=os.path.abspath('apps/wildberries-5-3-4000.apk'),
     # appPackage='com.android.settings',
-    #appActivity='.Settings',
+    # appActivity='.Settings',
     platformName='Android',
     automationName='uiautomator2',
     deviceName='Android',
@@ -23,10 +23,10 @@ appium_server_url = 'http://localhost:4723'
 def driver(request):
     app_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     request.cls.driver = app_driver
-    app_driver.press_keycode(3)  # Домой
+    # app_driver.press_keycode(3)  # Домой
     sleep(1)
     yield app_driver
-    app_driver.press_keycode(3)  # Домой
+    # app_driver.press_keycode(3)  # Домой
     app_driver.quit()
 
 

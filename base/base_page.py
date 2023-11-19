@@ -1,21 +1,66 @@
 import subprocess
+from base.key_cods import KeyCodeForDevices, KeyKodeForApps
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from appium.webdriver import WebElement, Remote
 from appium.webdriver.common.appiumby import AppiumBy
+from colorama import Fore, Style
 from time import sleep
 
 class BasePage:
 
-    CHROME = (AppiumBy.XPATH, '//android.widget.TextView[@content-desc="Chrome"]')
-    LOGO_GOOGLE = (AppiumBy.CLASS_NAME, 'android.widget.FrameLayout')
-    SEARSH_INPUT = (AppiumBy.ID, 'com.android.chrome:id/search_box_text')
-    RADIO_BUTTON_RUSSIA = (AppiumBy.XPATH, '//android.widget.TextView[@text="Россия"]')
+    FOLDER_AND_APP = "apps/wildberries-5-3-4000.apk"
 
 
     def __init__(self, driver:Remote):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 20, 1)
+        self.wait = WebDriverWait(driver, 60, 1)
+
+
+    def color_message_in_consol(self, name_function: str, text: str) -> None:
+        print(f'\n{Fore.CYAN}Function: {name_function}{Style.RESET_ALL} (request) >>> {Fore.GREEN}{text}{Style.RESET_ALL}')
+
+
+    def setup_app(self, preferences: str = None, permissions: str = None, checking_version: str = None):
+        """Установка приложения с возможными дополнительными опциями
+
+        Params:
+            preferences: str = "-r" — сохранить данные приложения
+            permissions: str = "-d" — выдать все запрашиваемые разрешения
+            checking_version: str = "-g" — отключает проверку версии приложения
+
+        """
+        if preferences is None: preferences = ''
+        if permissions is None: permissions =''
+        if checking_version is None: checking_version = ''
+        setup_comand = f'adb install {preferences} {permissions} {checking_version} {self.FOLDER_AND_APP}'
+        print(setup_comand)
+        self.start_adb_comand_and_check_request_status('setup_app', setup_comand)
+
+
+    def start_adb_comand_and_check_request_status(self, name_func, adb_request: str) -> bool:
+        """Проверка статуса применения adb запроса"""
+        try:
+            obj = subprocess.check_output(adb_request, shell=True, stderr=subprocess.STDOUT, text=True)
+            self.color_message_in_consol(name_func, obj)
+            return True
+        except subprocess.CalledProcessError as e:
+            obj = e.output
+            self.color_message_in_consol(name_func, obj)
+            return False
+
+
+
+
+    def delet_cash(self, app_name: str) -> None:
+        """Clear cash
+        Params:
+            app_name: (str) - 'com.wildberries.ru'
+        """
+        command = f"adb shell pm clear {app_name}"
+        # print(self.start_adb_comand_and_check_request_status('delet_cash', command))
+        if not self.start_adb_comand_and_check_request_status('delet_cash', command):
+            self.setup_app(preferences='-r', permissions='-d', checking_version='-g')
 
 
     def open_activity(self, main_activity: str) -> None:
@@ -25,17 +70,15 @@ class BasePage:
             main_activity: (str) - 'com.wildberries.ru/ru.wildberries.SplashActivity'
 
         """
+
         command = f"adb shell am start -n {main_activity}"
-        subprocess.run(command, shell=True)
-
-    def delet_cash(self, app_name: str) -> None:
-        """Clear cash"""
-        command = f"adb shell pm clear {app_name}"
-        print(command)
-        subprocess.run(command, shell=True)
+        obj = subprocess.run(command, shell=True, text=True)
+        self.color_message_in_consol('open_activity', obj.args)
 
 
-    def click_obj(self, locator) -> None:
+
+
+    def click_obj(self, locator: str) -> None:
         """Нажать по кликабельному объекту"""
         el: WebElement = self.wait.until(EC.element_to_be_clickable(locator))
         el.click()
@@ -50,9 +93,6 @@ class BasePage:
         self.wait.until(EC.visibility_of_element_located(locator))
 
 
-
-
-
     def send(self, locator: str, text: str) -> None:
         """
         Ввод текста
@@ -63,11 +103,6 @@ class BasePage:
         """
         el: WebElement = self.wait.until(EC.element_to_be_clickable(locator))
         el.send_keys(text)
-
-    def press_enter(self) -> None:
-        # self.driver.is_keyboard_shown()
-        self.driver.press_keycode(66)
-        sleep(2)
 
 
     def swipe_too(self, target_direction: str = 'MOVE_UP', repeat: int = 1) -> None:
@@ -90,32 +125,16 @@ class BasePage:
                 self.driver.swipe(200, 1000, 1200, 1000, duration=1000) # swaip_down
 
 
-    def open_chrome(self):
-        self.click_obj(self.CHROME)
-        self.check_element_located(self.LOGO_GOOGLE)
-        self.send(locator=self.SEARSH_INPUT, text='Hoo Hoo Hoo')
-        self.press_enter()
-        sleep(5)
+    def press_enter(self) -> None:
+        # self.driver.is_keyboard_shown()
+        ADB_ENTER = KeyKodeForApps.ADB_ENTER
+        self.driver.press_keycode(ADB_ENTER)
 
+    def press_home(self) -> None:
+        ADB_HOME = KeyCodeForDevices.ADB_HOME
+        self.driver.press_keycode(ADB_HOME)
 
+    def press_back(self) -> None:
+        ADB_BACK = KeyCodeForDevices.ADB_HOME
+        self.driver.press_keycode(ADB_BACK)
 
-
-
-
-
-
-
-
-
-
-
-
-    # wite = WebDriverWait(driver, 20, 1)
-    # el = wite.until(EC.element_to_be_clickable(('xpath', '//androidx.compose.ui.platform.ComposeView/android.view.View/android.view.View/android.view.View[1]/android.view.View[1]')))
-    # el.click()
-    # driver.press_keycode(4) # Домой
-
-
-    # def test_find_battery(driver):
-    #     el = driver.find_element(by=AppiumBy.XPATH, value='//*[@text="Battery"]')
-    #     el.click()
